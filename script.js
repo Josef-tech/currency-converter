@@ -1,6 +1,7 @@
 window.addEventListener('load', function () {
     addEventListeners();
     setRates();
+    removeInputEventListeners();
 })
 
 
@@ -8,8 +9,8 @@ window.addEventListener('load', function () {
 async function setRates() {
     const { leftSide, rightSide } = getCalculatorData();
     const { fromRate, toRate } = await getBothCurrencies(leftSide.currency, rightSide.currency);
-    leftSide.wrapper.querySelector('.rate').innerHTML = fromRate;
-    rightSide.wrapper.querySelector('.rate').innerHTML = toRate;
+    leftSide.wrapper.querySelector('.rate').innerHTML = fromRate.toFixed(3);
+    rightSide.wrapper.querySelector('.rate').innerHTML = toRate.toFixed(3);
 
     leftSide.wrapper.querySelector('input').dispatchEvent(new Event('input', { bubbles: true }));
 }
@@ -26,8 +27,21 @@ function addEventListeners() {
                     w.querySelector('input').value = event.target.value * rate;
                 }
             })
+
         })
+
     })
+
+
+    function removeInputEventListeners() {
+        document.querySelectorAll('input').forEach((input) => {
+            input.removeEventListener('input', addEventListeners);
+        });
+    }
+
+    removeInputEventListeners();
+
+
 
     function setButtonsListeners() {
         document.querySelectorAll('.currency').forEach((button) => {
@@ -46,6 +60,17 @@ function addEventListeners() {
     }
 
     setButtonsListeners();
+
+
+    function removeButtonEventListeners() {
+        document.querySelectorAll('.currency').forEach((button) => {
+            button.removeEventListener('click', setButtonsListeners);
+        });
+    }
+
+    removeButtonEventListeners();
+
+
 
     document.querySelector('.swap').addEventListener('click', function () {
 
@@ -94,6 +119,15 @@ function getCurrencyRate(from, to) {
         .then(res => res.json())
         .then(data => data.rates[to])
 }
+
+
+
+
+
+
+
+
+
 
 
 

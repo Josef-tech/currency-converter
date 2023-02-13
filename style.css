@@ -127,6 +127,7 @@ header .enter {
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 20px;
+
 }
 
 .wrap .buttons {
@@ -148,11 +149,14 @@ header .enter {
     align-items: center;
     justify-content: center;
     color: #C6C6C6;
+    background-color: white;
+    border: 1px solid #E5E5E5;
 }
 
 .buttons .selected {
     color: #FFFFFF;
     background-color: #833ae0;
+    border: 1px solid #833ae0;
 }
 
 .buttons select:hover,
