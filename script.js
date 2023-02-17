@@ -16,13 +16,9 @@ function addEventListeners() {
         input.addEventListener('input', handleInput);
     });
 
-    function setButtonsListeners() {
-        document.querySelectorAll('.currency').forEach((button) => {
-            button.addEventListener('click', handleClick);
-        });
-    }
-
-    setButtonsListeners();
+    document.querySelectorAll('.currency').forEach((button) => {
+        button.addEventListener('click', handleClick);
+    });
 
     document.querySelector('.swap').addEventListener('click', handleSwap);
 }
@@ -32,13 +28,9 @@ function removeEventListeners() {
         input.removeEventListener('input', handleInput);
     });
 
-    function setButtonsListeners() {
-        document.querySelectorAll('.currency').forEach((button) => {
-            button.removeEventListener('click', handleClick);
-        });
-    }
-
-    setButtonsListeners();
+    document.querySelectorAll('.currency').forEach((button) => {
+        button.removeEventListener('click', handleClick);
+    });
 
     document.querySelector('.swap').removeEventListener('click', handleSwap);
 }
@@ -72,11 +64,12 @@ function handleSwap() {
     const rightButtons = rightWrapper.querySelector('.buttons');
     const leftButtonsClone = leftButtons.cloneNode(true);
     const rightButtonsClone = rightButtons.cloneNode(true);
-    leftButtons.remove()
-    rightButtons.remove()
-    leftWrapper.prepend(rightButtonsClone)
-    rightWrapper.prepend(leftButtonsClone)
-    setButtonsListeners();
+    leftButtons.remove();
+    rightButtons.remove();
+    leftWrapper.prepend(rightButtonsClone);
+    rightWrapper.prepend(leftButtonsClone);
+    removeEventListeners();
+    addEventListeners();
     setRates();
 }
 
