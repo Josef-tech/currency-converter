@@ -1,91 +1,83 @@
 window.addEventListener('load', function () {
     addEventListeners();
     setRates();
-    removeInputEventListeners();
-})
-
-
+});
 
 async function setRates() {
     const { leftSide, rightSide } = getCalculatorData();
     const { fromRate, toRate } = await getBothCurrencies(leftSide.currency, rightSide.currency);
     leftSide.wrapper.querySelector('.rate').innerHTML = fromRate.toFixed(3);
     rightSide.wrapper.querySelector('.rate').innerHTML = toRate.toFixed(3);
-
     leftSide.wrapper.querySelector('input').dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function addEventListeners() {
     document.querySelectorAll('input').forEach((input) => {
-        input.addEventListener('input', (event) => {
-            const wrappers = document.querySelectorAll('.wrap');
-            const changedWrapper = event.composedPath().find((e) => e.classList.contains('wrap'));
-
-            wrappers.forEach((w) => {
-                if (changedWrapper !== w) {
-                    const rate = +changedWrapper.querySelector('.rate').textContent;
-                    w.querySelector('input').value = event.target.value * rate;
-                }
-            })
-
-        })
-
-    })
-
-
-    function removeInputEventListeners() {
-        document.querySelectorAll('input').forEach((input) => {
-            input.removeEventListener('input', addEventListeners);
-        });
-    }
-
-    removeInputEventListeners();
-
-
+        input.addEventListener('input', handleInput);
+    });
 
     function setButtonsListeners() {
         document.querySelectorAll('.currency').forEach((button) => {
-            button.addEventListener('click', (event) => {
-                const changedWrapper = event.composedPath().find((e) => e.classList.contains('wrap'));
-
-                changedWrapper.querySelectorAll('.currency').forEach((button) => {
-                    button.classList.remove('selected')
-                })
-
-                event.target.classList.add('selected');
-
-                setRates();
-            })
-        })
+            button.addEventListener('click', handleClick);
+        });
     }
 
     setButtonsListeners();
 
+    document.querySelector('.swap').addEventListener('click', handleSwap);
+}
 
-    function removeButtonEventListeners() {
+function removeEventListeners() {
+    document.querySelectorAll('input').forEach((input) => {
+        input.removeEventListener('input', handleInput);
+    });
+
+    function setButtonsListeners() {
         document.querySelectorAll('.currency').forEach((button) => {
-            button.removeEventListener('click', setButtonsListeners);
+            button.removeEventListener('click', handleClick);
         });
     }
 
-    removeButtonEventListeners();
+    setButtonsListeners();
 
+    document.querySelector('.swap').removeEventListener('click', handleSwap);
+}
 
+function handleInput(event) {
+    const wrappers = document.querySelectorAll('.wrap');
+    const changedWrapper = event.composedPath().find((e) => e.classList.contains('wrap'));
 
-    document.querySelector('.swap').addEventListener('click', function () {
+    wrappers.forEach((w) => {
+        if (changedWrapper !== w) {
+            const rate = +changedWrapper.querySelector('.rate').textContent;
+            w.querySelector('input').value = event.target.value * rate;
+        }
+    });
+}
 
-        const [leftWrapper, rightWrapper] = document.querySelectorAll('.wrap');
-        const leftButtons = leftWrapper.querySelector('.buttons');
-        const rightButtons = rightWrapper.querySelector('.buttons');
-        const leftButtonsClone = leftButtons.cloneNode(true);
-        const rightButtonsClone = rightButtons.cloneNode(true);
-        leftButtons.remove()
-        rightButtons.remove()
-        leftWrapper.prepend(rightButtonsClone)
-        rightWrapper.prepend(leftButtonsClone)
-        setButtonsListeners();
-        setRates();
-    })
+function handleClick(event) {
+    const changedWrapper = event.composedPath().find((e) => e.classList.contains('wrap'));
+    changedWrapper.querySelectorAll('.currency').forEach((button) => {
+        button.classList.remove('selected')
+    });
+
+    event.target.classList.add('selected');
+
+    setRates();
+}
+
+function handleSwap() {
+    const [leftWrapper, rightWrapper] = document.querySelectorAll('.wrap');
+    const leftButtons = leftWrapper.querySelector('.buttons');
+    const rightButtons = rightWrapper.querySelector('.buttons');
+    const leftButtonsClone = leftButtons.cloneNode(true);
+    const rightButtonsClone = rightButtons.cloneNode(true);
+    leftButtons.remove()
+    rightButtons.remove()
+    leftWrapper.prepend(rightButtonsClone)
+    rightWrapper.prepend(leftButtonsClone)
+    setButtonsListeners();
+    setRates();
 }
 
 function getCalculatorData() {
@@ -105,6 +97,7 @@ function getCalculatorData() {
     }
 }
 
+
 async function getBothCurrencies(from, to) {
     const rate = await getCurrencyRate(from, to);
 
@@ -119,18 +112,3 @@ function getCurrencyRate(from, to) {
         .then(res => res.json())
         .then(data => data.rates[to])
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
